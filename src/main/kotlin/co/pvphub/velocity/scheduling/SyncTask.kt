@@ -9,8 +9,6 @@ import kotlin.concurrent.thread
 
 
 /**
- * Task allows for easy creation of asynchronous tasks.
- *
  * @param plugin instance
  * @param task you want to do
  */
