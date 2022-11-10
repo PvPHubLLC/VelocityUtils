@@ -1,5 +1,6 @@
 package co.pvphub.velocity.example
 
+import co.pvphub.velocity.dsl.colored
 import co.pvphub.velocity.plugin.VelocityPlugin
 import co.pvphub.velocity.scheduling.async
 import co.pvphub.velocity.scheduling.asyncRepeat

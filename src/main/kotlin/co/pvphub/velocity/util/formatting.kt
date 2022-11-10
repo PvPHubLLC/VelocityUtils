@@ -14,12 +14,11 @@ private val serializer = LegacyComponentSerializer.builder()
     .build()
 
 fun String.colored(
-    s: String,
     p: Player? = null,
     server: RegisteredServer? = null,
     vararg placeholders: Pair<String, String>
 ): TextComponent {
-    return color(s, p, server, *placeholders)
+    return color(this, p, server, *placeholders)
 }
 
 fun color(
