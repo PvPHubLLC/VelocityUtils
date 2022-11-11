@@ -1,25 +1,30 @@
 package co.pvphub.velocity.plugin
 
 import com.velocitypowered.api.proxy.ProxyServer
+import org.simpleyaml.configuration.file.YamlConfiguration
 import java.io.*
 import java.nio.file.Path
 import java.util.logging.Logger
-import kotlin.io.path.absolutePathString
 
 open class VelocityPlugin(
     val server: ProxyServer,
     val logger: Logger,
     val dataDirectory: Path
 ) {
+    var config: YamlConfiguration? = null
+        private set
 
     fun saveResource(resourcePath: String, replace: Boolean) {
         require(resourcePath != "") { "ResourcePath cannot be null or empty" }
         val resourcePath = resourcePath.replace('\\', '/')
         val `in` = javaClass.classLoader.getResourceAsStream(resourcePath)
             ?: throw IllegalArgumentException("The embedded resource '$resourcePath' cannot be found")
-        val outFile = File(this.dataDirectory.absolutePathString(), resourcePath)
+        val outFile = File(this.dataDirectory.toAbsolutePath().toString(), resourcePath)
         val lastIndex = resourcePath.lastIndexOf('/')
-        val outDir = File(this.dataDirectory.absolutePathString(), resourcePath.substring(0, if (lastIndex >= 0) lastIndex else 0))
+        val outDir = File(
+            this.dataDirectory.toAbsolutePath().toString(),
+            resourcePath.substring(0, if (lastIndex >= 0) lastIndex else 0)
+        )
         if (!outDir.exists()) {
             outDir.mkdirs()
         }
@@ -48,5 +53,25 @@ open class VelocityPlugin(
         } catch (ex: IOException) {
             null
         }
+    }
+
+    fun saveDefaultConfig() {
+        config = createOrLoadConfig("${dataDirectory}/config.yml", "config.yml")
+    }
+
+    fun createOrLoadConfig(path: String, def: String? = null): YamlConfiguration {
+        val file = File(path)
+        if (!file.exists()) {
+            try {
+                if (def != null) {
+                    this.saveResource(def, false)
+                } else {
+                    file.createNewFile()
+                }
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+        }
+        return YamlConfiguration.loadConfiguration(file)
     }
 }

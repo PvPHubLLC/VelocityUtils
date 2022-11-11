@@ -15,6 +15,11 @@ class AsyncTask(
     private val asyncTask: (AsyncTask) -> Unit
 ) : SyncTask(plugin, {}) {
 
+    /**
+     * Call this method to run the task.
+     *
+     * @return the task currently running.
+     */
     override fun schedule(): ScheduledTask {
         val scheduledTask = plugin.server.scheduler
             .buildTask(plugin, getTask())
@@ -26,7 +31,7 @@ class AsyncTask(
     }
 
     override fun getTask() : () -> Unit = {
-        thread(false) {
+        ThreadManager.worker.submit {
             asyncTask(this)
             iteration++
         }

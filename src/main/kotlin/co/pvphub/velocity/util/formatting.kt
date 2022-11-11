@@ -1,8 +1,7 @@
-package co.pvphub.velocity.dsl
+package co.pvphub.velocity.util
 
 import com.velocitypowered.api.proxy.Player
 import com.velocitypowered.api.proxy.server.RegisteredServer
-import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.TextComponent
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer
 import java.util.regex.Pattern
