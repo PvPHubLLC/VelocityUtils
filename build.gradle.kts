@@ -29,10 +29,11 @@ repositories {
 }
 
 dependencies {
-    testImplementation(kotlin("stdlib-jdk8"))
+    implementation("org.jetbrains.kotlin:kotlin-stdlib:1.7.10")
     implementation("org.jetbrains.kotlin:kotlin-reflect:1.7.10")
     compileOnly("com.velocitypowered:velocity-api:3.1.0")
     kapt("com.velocitypowered:velocity-api:3.1.0")
+    implementation("me.carleslc.Simple-YAML:Simple-Yaml:1.7.2")
 }
 sourceSets["main"].resources.srcDir("src/resources/")
 
@@ -64,6 +65,6 @@ publishing {
 
 }
 tasks.withType<com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar> {
-    archiveBaseName.set("twoauthmc")
+    archiveBaseName.set("velocityutils")
     mergeServiceFiles()
 }
