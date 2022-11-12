@@ -8,7 +8,7 @@ plugins {
 }
 
 group = "co.pvphub"
-version = "1.0-SNAPSHOT"
+version = "-SNAPSHOT"
 
 repositories {
     mavenCentral()
