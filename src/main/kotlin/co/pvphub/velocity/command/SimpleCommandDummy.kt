@@ -6,8 +6,12 @@ import java.util.concurrent.CompletableFuture
 class SimpleCommandDummy(
     private val cmd: SimpleCommandBuilder
 ) : SimpleCommand {
-    override fun execute(invocation: SimpleCommand.Invocation?) {
-        TODO("Not yet implemented")
+    override fun execute(invocation: SimpleCommand.Invocation) {
+        cmd.getCommand(invocation.arguments().toList())?.also {
+            it.executeFor(invocation.source(), invocation.arguments().toList(), invocation.alias())
+        } ?: run {
+            cmd.unknown(invocation.source(), invocation.arguments().toList(), invocation.alias())
+        }
     }
 
     override fun hasPermission(invocation: SimpleCommand.Invocation?): Boolean {
@@ -15,7 +19,8 @@ class SimpleCommandDummy(
     }
 
     override fun suggestAsync(invocation: SimpleCommand.Invocation): CompletableFuture<MutableList<String>> {
-        val cmds = cmd.getCurrentCommand(invocation.arguments().toList())
+        // todo return the suggestions
+        val cmds = cmd.getCommands(invocation.arguments().toList())
         if (cmds.isEmpty()) return CompletableFuture()
         return CompletableFuture()
     }
