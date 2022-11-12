@@ -20,6 +20,8 @@ import com.mojang.brigadier.builder.LiteralArgumentBuilder
 import co.pvphub.velocity.command.literal.Command
 import co.pvphub.velocity.command.literal.CommandArgument
 import co.pvphub.velocity.command.literal.ExecutableCommand
+import com.velocitypowered.api.command.CommandSource
+import com.velocitypowered.api.proxy.Player
 import kotlin.properties.ReadOnlyProperty
 import kotlin.reflect.KProperty
 import com.mojang.brigadier.Command as BrigadierCommand
@@ -33,7 +35,7 @@ open class DslCommand<S>(
         literal: String, builderBlock: DslCommandBuilder<S>.() -> Unit,
     ) : this(literal, null, builderBlock)
 
-    override fun buildLiteral(): LiteralArgumentBuilder<S> {
+    override fun buildLiteral() : LiteralArgumentBuilder<S> {
         val dslNode = LiteralNode<S>(literal, ContextRef())
         dslNode.apply(apply)
 
@@ -89,10 +91,14 @@ class DslCommandBuilder<S>(
     fun subcommands(vararg commands: Command<S>) {
         dslNode.subcommands(*commands)
     }
+
+    operator fun plus(command: Command<S>) {
+        dslNode.subcommands(command)
+    }
 }
 
 fun <S> command(
     literal: String,
     apply: (LiteralArgumentBuilder<S>.() -> Unit)? = null,
     block: DslCommandBuilder<S>.() -> Unit,
-) = DslCommand(literal, apply, block)
+) where S : CommandSource = DslCommand(literal, apply, block)

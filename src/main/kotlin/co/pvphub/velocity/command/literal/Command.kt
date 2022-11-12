@@ -17,6 +17,7 @@ package co.pvphub.velocity.command.literal
 
 import com.mojang.brigadier.CommandDispatcher
 import com.mojang.brigadier.builder.LiteralArgumentBuilder
+import com.velocitypowered.api.command.CommandSource
 
 interface Command<S> {
     /**

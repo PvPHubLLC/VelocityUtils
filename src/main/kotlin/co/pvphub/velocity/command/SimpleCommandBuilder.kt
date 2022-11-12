@@ -2,7 +2,6 @@ package co.pvphub.velocity.command
 
 import co.pvphub.velocity.plugin.VelocityPlugin
 import com.velocitypowered.api.command.CommandSource
-import com.velocitypowered.api.command.SimpleCommand
 
 open class SimpleCommandBuilder(
     var name: String = "",
@@ -63,15 +62,16 @@ open class SimpleCommandBuilder(
         return aliases.toMutableList() + name
     }
 
-    infix fun getSuggestion(arg: String) : List<String> {
+    infix fun getSuggetions(arg: String) : List<String> {
         suggests?.also {
             return it(arg) ?: listOf()
         } ?: run {
-            if (suggestSubCommands)
+            if (suggestSubCommands) {
                 return subCommands
                     .map { it.allAliases() }
                     .flatten()
                     .filter { it.startsWith(arg) }
+            }
         }
         return listOf()
     }
@@ -85,8 +85,12 @@ open class SimpleCommandBuilder(
         plugin.server.commandManager.register(name, SimpleCommandDummy(this), *aliases.toTypedArray())
     }
 
-    fun isCommand(arg: String) : Boolean {
+    fun couldBeCommand(arg: String) : Boolean {
         return name.startsWith(arg) || aliases.any { it.startsWith(arg) }
+    }
+
+    fun isCommand(arg: String) : Boolean {
+        return name == arg || aliases.any { it == arg }
     }
 
     fun getCommand(args: List<String>) : SimpleCommandBuilder? {
@@ -97,20 +101,7 @@ open class SimpleCommandBuilder(
                 return if (args.size > 1) cmd.getCommand(args.subList(1, args.size)) else cmd
             }
         }
-        return null
-    }
-
-    fun getCommands(args: List<String>) : List<SimpleCommandBuilder> {
-        if (args.isEmpty()) return listOf(this)
-        val cmds = arrayListOf<SimpleCommandBuilder>()
-        subCommands.forEach { cmd ->
-            if (cmd.isCommand(args[0])) {
-                if (args.size > 1) {
-                    cmds.addAll(cmd.getCommands(args.subList(1, args.size)))
-                } else cmds.add(cmd)
-            }
-        }
-        return cmds
+        return this
     }
 
 }

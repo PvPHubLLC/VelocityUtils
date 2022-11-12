@@ -14,14 +14,20 @@ class SimpleCommandDummy(
         }
     }
 
-    override fun hasPermission(invocation: SimpleCommand.Invocation?): Boolean {
+    override fun hasPermission(invocation: SimpleCommand.Invocation): Boolean {
+
+         // todo impl
         return super.hasPermission(invocation)
     }
 
     override fun suggestAsync(invocation: SimpleCommand.Invocation): CompletableFuture<MutableList<String>> {
-        // todo return the suggestions
-        val cmds = cmd.getCommands(invocation.arguments().toList())
-        if (cmds.isEmpty()) return CompletableFuture()
-        return CompletableFuture()
+        val current = if (invocation.arguments().isEmpty()) ""
+            else invocation.arguments()[if (invocation.arguments().size - 1 > 0) invocation.arguments().size - 1 else 0]
+        var args = invocation.arguments().toMutableList()
+        args = if (args.size - 1 < 0) mutableListOf("") else args.subList(0, args.size - 1)
+        cmd.getCommand(args)?.let {
+            return CompletableFuture.completedFuture(it.getSuggetions(current).toMutableList())
+        }
+        return CompletableFuture.completedFuture(mutableListOf())
     }
 }

@@ -32,6 +32,7 @@ import com.mojang.brigadier.arguments.LongArgumentType.getLong
 import com.mojang.brigadier.arguments.LongArgumentType.longArg
 import com.mojang.brigadier.arguments.StringArgumentType.*
 import com.mojang.brigadier.context.CommandContext
+import com.velocitypowered.api.command.CommandSource
 import com.velocitypowered.api.proxy.Player
 
 fun <S, T, V> argument(
@@ -47,7 +48,7 @@ fun <S, T> argumentImplied(
 inline fun <S, reified V> impliedGetter(): ((CommandContext<S>, String) -> V) =
     { context, name -> context.getArgument(name, V::class.java) }
 
-fun <S> DslCommandBuilder<S>.boolean(name: String) =
+fun <S : CommandSource> DslCommandBuilder<S>.boolean(name: String) =
     argumentImplied<S, Boolean>(name, bool(), ::getBool)
 
 fun <S> DslCommandBuilder<S>.integer(name: String, min: Int = Int.MIN_VALUE, max: Int = Int.MAX_VALUE) =
