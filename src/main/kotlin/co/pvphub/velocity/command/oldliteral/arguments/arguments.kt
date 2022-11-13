@@ -1,4 +1,4 @@
-package co.pvphub.velocity.command.literal.arguments
+package co.pvphub.velocity.command.oldliteral.arguments
 
 /*
  * Copyright 2020-present Nicolai Christophersen
@@ -16,9 +16,8 @@ package co.pvphub.velocity.command.literal.arguments
  * limitations under the License.
  */
 
-import co.pvphub.velocity.command.literal.RequiredArgument
-import co.pvphub.velocity.command.literal.dsl.DslCommandBuilder
-import co.pvphub.velocity.plugin.VelocityPlugin
+import co.pvphub.velocity.command.oldliteral.RequiredArgument
+import co.pvphub.velocity.command.oldliteral.dsl.DslCommandBuilder
 import com.mojang.brigadier.arguments.ArgumentType
 import com.mojang.brigadier.arguments.BoolArgumentType.bool
 import com.mojang.brigadier.arguments.BoolArgumentType.getBool
@@ -33,41 +32,40 @@ import com.mojang.brigadier.arguments.LongArgumentType.longArg
 import com.mojang.brigadier.arguments.StringArgumentType.*
 import com.mojang.brigadier.context.CommandContext
 import com.velocitypowered.api.command.CommandSource
-import com.velocitypowered.api.proxy.Player
 
-fun <S, T, V> argument(
+fun <S : CommandSource, T, V> argument(
     name: String, type: ArgumentType<T>,
     getter: (CommandContext<S>, String) -> V,
 ) = RequiredArgument(name, type, getter)
 
-fun <S, T> argumentImplied(
+fun <S : CommandSource, T> argumentImplied(
     name: String, type: ArgumentType<T>,
     getter: (CommandContext<S>, String) -> T,
 ) = argument(name, type, getter)
 
-inline fun <S, reified V> impliedGetter(): ((CommandContext<S>, String) -> V) =
+inline fun <S, reified V> impliedGetter(): ((CommandContext<S>, String) -> V) where S : CommandSource =
     { context, name -> context.getArgument(name, V::class.java) }
 
-fun <S : CommandSource> DslCommandBuilder<S>.boolean(name: String) =
+fun <S> DslCommandBuilder<S>.boolean(name: String) where S : CommandSource =
     argumentImplied<S, Boolean>(name, bool(), ::getBool)
 
-fun <S> DslCommandBuilder<S>.integer(name: String, min: Int = Int.MIN_VALUE, max: Int = Int.MAX_VALUE) =
+fun <S> DslCommandBuilder<S>.integer(name: String, min: Int = Int.MIN_VALUE, max: Int = Int.MAX_VALUE) where S : CommandSource =
     argumentImplied<S, Int>(name, integer(min, max), ::getInteger)
 
-fun <S> DslCommandBuilder<S>.long(name: String, min: Long = Long.MIN_VALUE, max: Long = Long.MAX_VALUE) =
+fun <S> DslCommandBuilder<S>.long(name: String, min: Long = Long.MIN_VALUE, max: Long = Long.MAX_VALUE) where S : CommandSource =
     argumentImplied<S, Long>(name, longArg(min, max), ::getLong)
 
-fun <S> DslCommandBuilder<S>.float(name: String, min: Float = -Float.MAX_VALUE, max: Float = Float.MAX_VALUE) =
+fun <S> DslCommandBuilder<S>.float(name: String, min: Float = -Float.MAX_VALUE, max: Float = Float.MAX_VALUE) where S : CommandSource =
     argumentImplied<S, Float>(name, floatArg(min, max), ::getFloat)
 
-fun <S> DslCommandBuilder<S>.double(name: String, min: Double = -Double.MAX_VALUE, max: Double = Double.MAX_VALUE) =
+fun <S> DslCommandBuilder<S>.double(name: String, min: Double = -Double.MAX_VALUE, max: Double = Double.MAX_VALUE) where S : CommandSource =
     argumentImplied<S, Double>(name, doubleArg(min, max), ::getDouble)
 
-fun <S> DslCommandBuilder<S>.word(name: String) =
+fun <S> DslCommandBuilder<S>.word(name: String) where S : CommandSource =
     argumentImplied<S, String>(name, word(), ::getString)
 
-fun <S> DslCommandBuilder<S>.string(name: String) =
+fun <S> DslCommandBuilder<S>.string(name: String) where S : CommandSource =
     argumentImplied<S, String>(name, string(), ::getString)
 
-fun <S> DslCommandBuilder<S>.greedyString(name: String) =
+fun <S> DslCommandBuilder<S>.greedyString(name: String) where S : CommandSource =
     argumentImplied<S, String>(name, greedyString(), ::getString)

@@ -1,4 +1,4 @@
-package co.pvphub.velocity.command.literal
+package co.pvphub.velocity.command.oldliteral
 
 /*
  * Copyright 2020-present Nicolai Christophersen

@@ -1,15 +1,18 @@
 package co.pvphub.velocity
 
-import co.pvphub.velocity.command.literal.arguments.greedyString
-import co.pvphub.velocity.command.literal.arguments.string
-import co.pvphub.velocity.command.literal.dsl.command
+import co.pvphub.velocity.command.oldliteral.arguments.greedyString
+import co.pvphub.velocity.command.oldliteral.arguments.integer
+import co.pvphub.velocity.command.oldliteral.arguments.string
+import co.pvphub.velocity.command.oldliteral.dsl.command
+import co.pvphub.velocity.command.oldliteral.register
 import co.pvphub.velocity.dsl.simpleCommand
 import co.pvphub.velocity.plugin.VelocityPlugin
 import co.pvphub.velocity.scheduling.async
 import co.pvphub.velocity.scheduling.asyncRepeat
 import co.pvphub.velocity.util.colored
-import com.mojang.brigadier.CommandDispatcher
+import com.mojang.brigadier.builder.LiteralArgumentBuilder
 import com.velocitypowered.api.command.BrigadierCommand
+import com.velocitypowered.api.command.CommandSource
 import com.velocitypowered.api.event.Subscribe
 import com.velocitypowered.api.event.proxy.ProxyInitializeEvent
 import com.velocitypowered.api.plugin.Plugin
@@ -92,7 +95,7 @@ class ExamplePlugin @Inject constructor(
             }
         }.register(this)
 
-        val msg = command<Player>("vmsg") {
+        command<Player>("vmsg") {
             val recipient by string("recipient")
             val message by greedyString("message")
 
@@ -103,16 +106,25 @@ class ExamplePlugin @Inject constructor(
                     target.sendMessage("&7[&a${source.username}&7 -> Me] &f".colored().append(Component.text(message)))
                 } ?: run { source.sendMessage("&cThe player $recipient is not online!".colored()) }
             }
+        }.register(this.server)
 
-            this + command<Player>("last") {
-                val message by greedyString("message")
+        command<Player>("balls") {
+            subcommand(command<Player>("test") {
+                val msg by greedyString("message")
 
                 runs {
-                    source.sendMessage("test".colored())
+                    source.sendMessage("&7You: &f$msg".colored())
                 }
-            }
-        }
-//        server.commandManager.register(BrigadierCommand(msg.buildLiteral()))
+            })
+            subcommand(command<Player>("add") {
+                val first by integer("first")
+                val second by integer("second")
+
+                runs {
+                    source.sendMessage("&7$first + $second = ${first + second}".colored())
+                }
+            })
+        }.register(this.server)
     }
 
 }

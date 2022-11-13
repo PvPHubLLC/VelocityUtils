@@ -1,4 +1,4 @@
-package co.pvphub.velocity.command.literal.dsl
+package co.pvphub.velocity.command.oldliteral.dsl
 
 /*
  * Copyright 2020-present Nicolai Christophersen
@@ -21,12 +21,13 @@ import com.mojang.brigadier.builder.ArgumentBuilder
 import com.mojang.brigadier.builder.LiteralArgumentBuilder
 import com.mojang.brigadier.builder.RequiredArgumentBuilder
 import com.mojang.brigadier.context.CommandContext
-import co.pvphub.velocity.command.literal.*
+import co.pvphub.velocity.command.oldliteral.*
+import com.velocitypowered.api.command.CommandSource
 import com.mojang.brigadier.Command as BrigadierCommand
 
 sealed class DslCommandTree<S, A : ArgumentBuilder<S, A>>(
     private val contextRef: ContextRef<S>,
-) {
+) where S : CommandSource {
     protected var command: BrigadierCommand<S>? =
         null
 
@@ -122,12 +123,12 @@ sealed class DslCommandTree<S, A : ArgumentBuilder<S, A>>(
 class LiteralNode<S>(
     private val literal: String,
     contextRef: ContextRef<S>,
-) : DslCommandTree<S, LiteralArgumentBuilder<S>>(contextRef) {
+): DslCommandTree<S, LiteralArgumentBuilder<S>>(contextRef) where S : CommandSource {
     override fun buildNode(): LiteralArgumentBuilder<S> =
         LiteralArgumentBuilder.literal(literal)
 }
 
-sealed class ArgumentNode<S, T, V>(
+sealed class ArgumentNode<S : CommandSource, T, V>(
     private val argument: CommandArgument<S, T, V>,
     contextRef: ContextRef<S>,
 ) : DslCommandTree<S, RequiredArgumentBuilder<S, T>>(contextRef) {
@@ -141,13 +142,13 @@ sealed class ArgumentNode<S, T, V>(
 class RequiredArgumentNode<S, T, V>(
     argument: RequiredArgument<S, T, V>,
     contextRef: ContextRef<S>,
-) : ArgumentNode<S, T, V>(argument, contextRef)
+) : ArgumentNode<S, T, V>(argument, contextRef) where S : CommandSource
 
 class OptionalArgumentNode<S, T, V>(
     private val parent: DslCommandTree<S, *>,
     argument: OptionalArgument<S, T, *, V>,
     contextRef: ContextRef<S>,
-) : ArgumentNode<S, T, V>(argument, contextRef) {
+) : ArgumentNode<S, T, V>(argument, contextRef) where S : CommandSource {
     override fun literal(
         literal: String,
         apply: (LiteralArgumentBuilder<S>.() -> Unit)?,

@@ -1,4 +1,4 @@
-package co.pvphub.velocity.command.literal.dsl
+package co.pvphub.velocity.command.oldliteral.dsl
 
 /*
  * Copyright 2020-present Nicolai Christophersen
@@ -17,11 +17,10 @@ package co.pvphub.velocity.command.literal.dsl
  */
 
 import com.mojang.brigadier.builder.LiteralArgumentBuilder
-import co.pvphub.velocity.command.literal.Command
-import co.pvphub.velocity.command.literal.CommandArgument
-import co.pvphub.velocity.command.literal.ExecutableCommand
+import co.pvphub.velocity.command.oldliteral.Command
+import co.pvphub.velocity.command.oldliteral.CommandArgument
+import co.pvphub.velocity.command.oldliteral.ExecutableCommand
 import com.velocitypowered.api.command.CommandSource
-import com.velocitypowered.api.proxy.Player
 import kotlin.properties.ReadOnlyProperty
 import kotlin.reflect.KProperty
 import com.mojang.brigadier.Command as BrigadierCommand
@@ -30,7 +29,7 @@ open class DslCommand<S>(
     private val literal: String,
     private val apply: (LiteralArgumentBuilder<S>.() -> Unit)? = null,
     private val block: (DslCommandBuilder<S>.() -> Unit),
-) : Command<S> {
+) : Command<S> where S : CommandSource {
     constructor(
         literal: String, builderBlock: DslCommandBuilder<S>.() -> Unit,
     ) : this(literal, null, builderBlock)
@@ -46,7 +45,7 @@ open class DslCommand<S>(
     }
 }
 
-class DslCommandBuilder<S>(
+class DslCommandBuilder<S : CommandSource>(
     private var dslNode: DslCommandTree<S, *>,
 ) {
     fun executes(command: BrigadierCommand<S>) {

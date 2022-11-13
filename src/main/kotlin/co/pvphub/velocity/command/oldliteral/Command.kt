@@ -1,4 +1,4 @@
-package co.pvphub.velocity.command.literal
+package co.pvphub.velocity.command.oldliteral
 /*
  * Copyright 2020-present Nicolai Christophersen
  *
@@ -17,9 +17,11 @@ package co.pvphub.velocity.command.literal
 
 import com.mojang.brigadier.CommandDispatcher
 import com.mojang.brigadier.builder.LiteralArgumentBuilder
+import com.velocitypowered.api.command.BrigadierCommand
 import com.velocitypowered.api.command.CommandSource
+import com.velocitypowered.api.proxy.ProxyServer
 
-interface Command<S> {
+interface Command<S> where S : CommandSource {
     /**
      * Builds a [literal][LiteralArgumentBuilder] argument that can be used by
      * the [register][CommandDispatcher.register] function on a dispatcher to
@@ -32,6 +34,6 @@ interface Command<S> {
  * [Builds][Command.buildLiteral] a [literal][LiteralArgumentBuilder] argument
  * from the specific [command] and registers it to this dispatcher.
  */
-fun <S> CommandDispatcher<S>.register(command: Command<S>) {
-    register(command.buildLiteral())
+fun <S> Command<S>.register(server: ProxyServer) where S : CommandSource {
+    server.commandManager.register(BrigadierCommand(this.buildLiteral() as LiteralArgumentBuilder<CommandSource>))
 }
