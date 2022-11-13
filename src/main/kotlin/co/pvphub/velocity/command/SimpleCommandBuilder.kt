@@ -62,12 +62,13 @@ open class SimpleCommandBuilder(
         return aliases.toMutableList() + name
     }
 
-    infix fun getSuggetions(arg: String) : List<String> {
+    fun getSuggetions(arg: String, source: CommandSource) : List<String> {
         suggests?.also {
             return it(arg) ?: listOf()
         } ?: run {
             if (suggestSubCommands) {
                 return subCommands
+                    .filter { it.hasPermission(source) }
                     .map { it.allAliases() }
                     .flatten()
                     .filter { it.startsWith(arg) }

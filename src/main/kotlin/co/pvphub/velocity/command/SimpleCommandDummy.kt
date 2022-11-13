@@ -15,9 +15,10 @@ class SimpleCommandDummy(
     }
 
     override fun hasPermission(invocation: SimpleCommand.Invocation): Boolean {
-
-         // todo impl
-        return super.hasPermission(invocation)
+        cmd.getCommand(invocation.arguments().toList())?.let {
+            return it.hasPermission(invocation.source())
+        }
+        return false
     }
 
     override fun suggestAsync(invocation: SimpleCommand.Invocation): CompletableFuture<MutableList<String>> {
@@ -26,7 +27,9 @@ class SimpleCommandDummy(
         var args = invocation.arguments().toMutableList()
         args = if (args.size - 1 < 0) mutableListOf("") else args.subList(0, args.size - 1)
         cmd.getCommand(args)?.let {
-            return CompletableFuture.completedFuture(it.getSuggetions(current).toMutableList())
+            return CompletableFuture.completedFuture(
+                it.getSuggetions(current, invocation.source()).toMutableList()
+            )
         }
         return CompletableFuture.completedFuture(mutableListOf())
     }
