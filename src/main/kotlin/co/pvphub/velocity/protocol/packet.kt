@@ -5,7 +5,7 @@ import co.pvphub.velocity.reflect.velocityClass
 import com.velocitypowered.api.proxy.Player
 import com.velocitypowered.api.proxy.ProxyServer
 import com.velocitypowered.api.proxy.server.RegisteredServer
-import io.netty.buffer.ByteBuf
+import io.netty.buffer.*
 
 val minecraftPacketClass = "protocol.MinecraftPacket".velocityClass()!!
 
@@ -13,6 +13,12 @@ fun packetByName(name: String, vararg args: Any) : Any {
     val packetByName = "protocol.packet.$name".velocityClass()
     val inst = packetByName?.getConstructor(*args.map { it::class.java }.toTypedArray())
     return inst!!.newInstance(*args)
+}
+
+fun packet(cb: ByteBuf.() -> Unit) : ByteBuf {
+    val by = Unpooled.buffer()
+    cb(by)
+    return by
 }
 
 val connectedPlayerClass = "connection.client.ConnectedPlayer".velocityClass()!!

@@ -52,7 +52,7 @@ open class ClassAccessor(
         return clazz.getDeclaredField(name).getShort(obj ?: clazz)
     }
 
-    fun <T> genericMethod(name: String, vararg args: Any) : T {
+    fun <T> staticMethod(name: String, vararg args: Any) : T {
         return getMethod(name, *args).invoke(clazz, *args) as T
     }
 

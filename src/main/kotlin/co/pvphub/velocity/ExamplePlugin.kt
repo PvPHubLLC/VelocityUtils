@@ -8,6 +8,7 @@ import co.pvphub.velocity.command.oldliteral.register
 import co.pvphub.velocity.dsl.simpleCommand
 import co.pvphub.velocity.extensions.json
 import co.pvphub.velocity.plugin.VelocityPlugin
+import co.pvphub.velocity.protocol.packet
 import co.pvphub.velocity.protocol.packet.Disconnect
 import co.pvphub.velocity.protocol.packet.title.TitleActionbarPacket
 import co.pvphub.velocity.protocol.packet.title.TitleSubtitlePacket
@@ -15,6 +16,7 @@ import co.pvphub.velocity.protocol.packet.title.TitleTextPacket
 import co.pvphub.velocity.protocol.packet.title.TitleTimesPacket
 import co.pvphub.velocity.protocol.sendPacket
 import co.pvphub.velocity.protocol.sendPackets
+import co.pvphub.velocity.protocol.writeComponent
 import co.pvphub.velocity.scheduling.async
 import co.pvphub.velocity.scheduling.asyncRepeat
 import co.pvphub.velocity.util.colored
@@ -131,6 +133,17 @@ class ExamplePlugin @Inject constructor(
                 name = "disconnect"
                 executes { source, _, _ ->
                     (source as Player).sendPacket(Disconnect("&cNaughty boy".colored().json()).get())
+                }
+            }
+
+            subCommands += simpleCommand {
+                name = "custompacket"
+                executes { source, _, _ ->
+                    val byte = packet {
+                        writeInt(0x19)
+                        writeComponent("&7Custom disconnect reason".colored())
+                    }
+                    (source as Player).sendPacket(byte)
                 }
             }
         }.register(this)
