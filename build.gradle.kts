@@ -13,7 +13,7 @@ version = "-SNAPSHOT"
 repositories {
     mavenCentral()
     maven {
-        url = uri("https://nexus.velocitypowered.com/repository/maven-public/")
+        url = uri("https://repo.papermc.io/repository/maven-public/")
     }
     maven {
         name = "PvPHub"
@@ -31,8 +31,8 @@ repositories {
 dependencies {
     implementation("org.jetbrains.kotlin:kotlin-stdlib:1.7.10")
     implementation("org.jetbrains.kotlin:kotlin-reflect:1.7.10")
-    compileOnly("com.velocitypowered:velocity-api:3.1.0")
-    kapt("com.velocitypowered:velocity-api:3.1.0")
+    compileOnly("com.velocitypowered:velocity-api:3.1.2-SNAPSHOT")
+    kapt("com.velocitypowered:velocity-api:3.1.2-SNAPSHOT")
     implementation("me.carleslc.Simple-YAML:Simple-Yaml:1.7.2")
     implementation("io.netty:netty-buffer:5.0.0.Alpha2")
 }

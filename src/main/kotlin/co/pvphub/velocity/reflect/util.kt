@@ -1,6 +1,7 @@
 package co.pvphub.velocity.reflect
 
 import java.lang.reflect.Constructor
+import java.lang.reflect.Field
 
 fun findClass(name: String) : Class<*>? {
     return try {
@@ -16,4 +17,9 @@ fun findVelocityClass(name: String) : Class<*>? {
 
 fun String.velocityClass() : Class<*>? {
     return findVelocityClass(this)
+}
+
+fun Field.accessible(value: Boolean) : Field {
+    this.isAccessible = value
+    return this
 }

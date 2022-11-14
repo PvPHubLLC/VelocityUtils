@@ -8,26 +8,23 @@ import co.pvphub.velocity.command.oldliteral.register
 import co.pvphub.velocity.dsl.simpleCommand
 import co.pvphub.velocity.extensions.json
 import co.pvphub.velocity.plugin.VelocityPlugin
-import co.pvphub.velocity.protocol.packet
+import co.pvphub.velocity.protocol.*
 import co.pvphub.velocity.protocol.packet.Disconnect
+import co.pvphub.velocity.protocol.packet.DummyPacket
 import co.pvphub.velocity.protocol.packet.title.TitleActionbarPacket
 import co.pvphub.velocity.protocol.packet.title.TitleSubtitlePacket
 import co.pvphub.velocity.protocol.packet.title.TitleTextPacket
-import co.pvphub.velocity.protocol.packet.title.TitleTimesPacket
-import co.pvphub.velocity.protocol.sendPacket
-import co.pvphub.velocity.protocol.sendPackets
-import co.pvphub.velocity.protocol.writeComponent
 import co.pvphub.velocity.scheduling.async
 import co.pvphub.velocity.scheduling.asyncRepeat
 import co.pvphub.velocity.util.colored
 import com.velocitypowered.api.event.Subscribe
 import com.velocitypowered.api.event.proxy.ProxyInitializeEvent
+import com.velocitypowered.api.network.ProtocolVersion
 import com.velocitypowered.api.plugin.Plugin
 import com.velocitypowered.api.plugin.annotation.DataDirectory
 import com.velocitypowered.api.proxy.Player
 import com.velocitypowered.api.proxy.ProxyServer
 import net.kyori.adventure.text.Component
-import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer
 import java.nio.file.Path
 import java.util.logging.Logger
 import javax.inject.Inject
@@ -139,14 +136,22 @@ class ExamplePlugin @Inject constructor(
             subCommands += simpleCommand {
                 name = "custompacket"
                 executes { source, _, _ ->
-                    val byte = packet {
-                        writeInt(0x19)
-                        writeComponent("&7Custom disconnect reason".colored())
-                    }
-                    (source as Player).sendPacket(byte)
                 }
             }
         }.register(this)
+
+        PacketType.PLAY.registerClientbound(DummyPacket(),
+            mappings(0x40, ProtocolVersion.MINECRAFT_1_7_2,null,  false),
+            mappings(0x1A, ProtocolVersion.MINECRAFT_1_9, null,  false),
+            mappings(0x1B, ProtocolVersion.MINECRAFT_1_13,null,  false),
+            mappings(0x1A, ProtocolVersion.MINECRAFT_1_14,null,  false),
+            mappings(0x1B, ProtocolVersion.MINECRAFT_1_15,null,  false),
+            mappings(0x1A, ProtocolVersion.MINECRAFT_1_16,null,  false),
+            mappings(0x19, ProtocolVersion.MINECRAFT_1_16_2,null,  false),
+            mappings(0x1A, ProtocolVersion.MINECRAFT_1_17,null,  false),
+            mappings(0x17, ProtocolVersion.MINECRAFT_1_19,null,  false),
+            mappings(0x19, ProtocolVersion.MINECRAFT_1_19_1,null,  false),
+        )
 
         command<Player>("vmsg") {
             val recipient by string("recipient")

@@ -18,7 +18,9 @@ object ProtocolUtils : ClassAccessor("protocol.ProtocolUtils") {
     fun write21BitVarInt(b: ByteBuf, i: Int) : Unit = staticMethod("write21BitVarInt", b, i)
     fun readString(it: ByteBuf) : String = staticMethod("readString", it)
     fun readStringCap(b: ByteBuf, i: Int) : String = staticMethod("readString", b, i)
-    fun writeString(b: ByteBuf, c: CharSequence) : Unit = staticMethod("writeString", b, c)
+    fun writeString(b: ByteBuf, c: CharSequence) {
+        getMethodByClasses("writeString", ByteBuf::class.java, CharSequence::class.java).invoke(null, b, c)
+    }
     fun readByteArray(it: ByteBuf) : Array<Byte> = staticMethod("readByteArray", it)
     fun readByteArrayCap(b: ByteBuf, c: Int) : Array<Byte> = staticMethod("readByteArray", b, c)
     fun writeByteArray(b: ByteBuf, a: Array<Byte>) : Unit = staticMethod("writeByteArray", b, a)
