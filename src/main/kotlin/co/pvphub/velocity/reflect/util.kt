@@ -1,4 +1,4 @@
-package co.pvphub.velocity.packet.reflect
+package co.pvphub.velocity.reflect
 
 import java.lang.reflect.Constructor
 

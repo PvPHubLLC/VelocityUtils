@@ -32,8 +32,9 @@ dependencies {
     implementation("org.jetbrains.kotlin:kotlin-stdlib:1.7.10")
     implementation("org.jetbrains.kotlin:kotlin-reflect:1.7.10")
     compileOnly("com.velocitypowered:velocity-api:3.1.0")
-//    kapt("com.velocitypowered:velocity-api:3.1.0")
+    kapt("com.velocitypowered:velocity-api:3.1.0")
     implementation("me.carleslc.Simple-YAML:Simple-Yaml:1.7.2")
+    implementation("io.netty:netty-buffer:5.0.0.Alpha2")
 }
 sourceSets["main"].resources.srcDir("src/resources/")
 
