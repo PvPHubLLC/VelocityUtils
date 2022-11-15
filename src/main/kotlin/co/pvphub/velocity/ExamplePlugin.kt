@@ -5,6 +5,7 @@ import co.pvphub.velocity.command.oldliteral.arguments.integer
 import co.pvphub.velocity.command.oldliteral.arguments.string
 import co.pvphub.velocity.command.oldliteral.dsl.command
 import co.pvphub.velocity.command.oldliteral.register
+import co.pvphub.velocity.dsl.event
 import co.pvphub.velocity.dsl.simpleCommand
 import co.pvphub.velocity.extensions.json
 import co.pvphub.velocity.plugin.VelocityPlugin
@@ -22,7 +23,9 @@ import co.pvphub.velocity.reflect.safeRegister
 import co.pvphub.velocity.scheduling.async
 import co.pvphub.velocity.scheduling.asyncRepeat
 import co.pvphub.velocity.util.colored
+import com.velocitypowered.api.event.PostOrder
 import com.velocitypowered.api.event.Subscribe
+import com.velocitypowered.api.event.player.PlayerChatEvent
 import com.velocitypowered.api.event.proxy.ProxyInitializeEvent
 import com.velocitypowered.api.network.ProtocolVersion
 import com.velocitypowered.api.plugin.Plugin
@@ -49,7 +52,7 @@ class ExamplePlugin @Inject constructor(
     dataDirectory: Path
 ) : VelocityPlugin(server, logger, dataDirectory) {
 
-    @Subscribe
+    @Subscribe(order = PostOrder.EARLY)
     fun onProxyInitialize(e: ProxyInitializeEvent) {
         async(this) {
             logger.info("This message is asynchronous thanks to VelocityUtils!")
@@ -57,6 +60,13 @@ class ExamplePlugin @Inject constructor(
         asyncRepeat(this, 1000) {
             logger.info("Repeated ${it.iteration + 1} times with 1s delay!")
             if (it.iteration >= 4) it.cancel()
+        }
+
+        event<PlayerChatEvent> {
+            if (player.username == "MattMX") {
+                result = PlayerChatEvent.ChatResult.denied()
+                player.sendMessage("&cYou are not allowed to speak gay-boy!".colored())
+            }
         }
 
         simpleCommand {
