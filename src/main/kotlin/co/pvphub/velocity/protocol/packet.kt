@@ -5,6 +5,7 @@ import co.pvphub.velocity.reflect.velocityClass
 import com.velocitypowered.api.proxy.Player
 import com.velocitypowered.api.proxy.ProxyServer
 import com.velocitypowered.api.proxy.server.RegisteredServer
+import com.velocitypowered.proxy.connection.client.ConnectedPlayer
 import io.netty.buffer.*
 
 val minecraftPacketClass = "protocol.MinecraftPacket".velocityClass()!!
@@ -26,6 +27,7 @@ fun Player.sendPacket(packet: Any) {
     val casted = connectedPlayerClass.cast(this)
     val con = casted::class.java.getMethod("getConnection").invoke(casted)
     con::class.java.getMethod("write", Object::class.java).invoke(con, packet)
+//    (this as ConnectedPlayer).connection.write(packet)
 }
 
 fun Player.sendPackets(vararg packets: Any) {
