@@ -40,7 +40,9 @@ object DependencyManager {
             val className: String
         ) {
             SQLITE(URL("https://repo1.maven.org/maven2/org/xerial/sqlite-jdbc/3.39.4.1/sqlite-jdbc-3.39.4.1.jar"),
-                "sqlite.jar", "org.sqlite.JDBC");
+                "sqlite.jar", "org.sqlite.JDBC"),
+            MYSQL(URL("https://repo1.maven.org/maven2/com/mysql/mysql-connector-j/8.0.31/mysql-connector-j-8.0.31.jar"),
+            "mysql.jar", "com.mysql.cj.jdbc.Driver");
             inline fun get(location: File, then: Dependency.() -> Unit) {
                 then(download(url, File(location, fileName)).load(className))
             }
