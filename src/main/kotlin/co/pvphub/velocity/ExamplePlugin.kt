@@ -1,5 +1,6 @@
 package co.pvphub.velocity
 
+import co.pvphub.velocity.classloading.DependencyManager
 import co.pvphub.velocity.command.oldliteral.arguments.greedyString
 import co.pvphub.velocity.command.oldliteral.arguments.integer
 import co.pvphub.velocity.command.oldliteral.arguments.string
@@ -34,6 +35,8 @@ import com.velocitypowered.api.proxy.Player
 import com.velocitypowered.api.proxy.ProxyServer
 import com.velocitypowered.proxy.protocol.StateRegistry
 import net.kyori.adventure.text.Component
+import java.io.File
+import java.net.URL
 import java.nio.file.Path
 import java.util.logging.Logger
 import javax.inject.Inject
@@ -57,6 +60,7 @@ class ExamplePlugin @Inject constructor(
         async(this) {
             logger.info("This message is asynchronous thanks to VelocityUtils!")
         }
+
         asyncRepeat(this, 1000) {
             logger.info("Repeated ${it.iteration + 1} times with 1s delay!")
             if (it.iteration >= 4) it.cancel()
@@ -67,6 +71,11 @@ class ExamplePlugin @Inject constructor(
                 result = PlayerChatEvent.ChatResult.denied()
                 player.sendMessage("&cYou are not allowed to speak gay-boy!".colored())
             }
+        }
+
+        val location = File("${dataDirectory.parent}/testing/")
+        DependencyManager.Common.Storage.SQLITE.getAsync(this, location) {
+            println("Downloaded and loaded")
         }
 
         simpleCommand {
