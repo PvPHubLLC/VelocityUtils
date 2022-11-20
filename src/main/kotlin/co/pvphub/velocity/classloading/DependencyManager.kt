@@ -4,6 +4,7 @@ import co.pvphub.velocity.plugin.VelocityPlugin
 import co.pvphub.velocity.scheduling.async
 import java.io.File
 import java.io.FileOutputStream
+import java.lang.reflect.Method
 import java.net.URL
 import java.net.URLClassLoader
 import java.nio.channels.Channels
@@ -64,6 +65,12 @@ class Dependency(
             arrayOf<URL>(location.toURI().toURL()),
             this.javaClass.classLoader
         )
+        val url: URL = location.toURI().toURL()
+
+        val classLoader = ClassLoader.getSystemClassLoader() as URLClassLoader
+        val method: Method = URLClassLoader::class.java.getDeclaredMethod("addURL", URL::class.java)
+        method.isAccessible = true
+        method(classLoader, url)
         val classToLoad = Class.forName(className, true, child)
         return this
     }
