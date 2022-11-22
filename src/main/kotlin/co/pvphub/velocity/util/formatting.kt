@@ -1,5 +1,6 @@
 package co.pvphub.velocity.util
 
+import co.pvphub.velocity.placeholders.PlaceholderManager
 import com.velocitypowered.api.proxy.Player
 import com.velocitypowered.api.proxy.server.RegisteredServer
 import net.kyori.adventure.text.TextComponent
@@ -20,25 +21,18 @@ fun String.colored(
     return color(this, p, server, *placeholders)
 }
 
+fun color(s: String) : TextComponent = color(s)
+fun color(s: String, p: Player) : TextComponent = color(s, p)
+
 fun color(
     s: String,
     p: Player? = null,
     server: RegisteredServer? = null,
     vararg placeholders: Pair<String, String>
 ): TextComponent {
-    var s = s
-    server?.let {
-        s = s.replace("%server-name%", server.serverInfo.name)
-            .replace("%server-connected%", Integer.toString(server.playersConnected.size))
-            .replace("%server-online%", Integer.toString(server.playersConnected.size))
-            .replace("%server-players%", Integer.toString(server.playersConnected.size))
-    }
-    p?.let {
-        s = s.replace("%player%", p.username)
-            .replace("%username%", p.username)
-    }
-    placeholders.forEach { s = s.replace(it.first, it.second) }
-    return serializer.deserialize(s)
+    var str = PlaceholderManager.applyPlaceholders(s, p, server)
+    placeholders.forEach { str = str.replace(it.first, it.second) }
+    return serializer.deserialize(str)
 }
 
 fun getSerializer(): LegacyComponentSerializer {
